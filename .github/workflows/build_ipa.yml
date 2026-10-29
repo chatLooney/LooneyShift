@@ -1,0 +1,38 @@
+name: Build LooneyShift IPA
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, looneyshift]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Fetch verified idevice library
+        run: python3 scripts/fetch_idevice.py
+      - name: Build for iPhone (unsigned)
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project StikDebug.xcodeproj -scheme StikDebug \
+            -configuration Release -archivePath build/LooneyShift.xcarchive \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+      - name: Package IPA
+        run: |
+          set -euo pipefail
+          mkdir -p build/package/Payload
+          cp -R build/LooneyShift.xcarchive/Products/Applications/StikDebug.app build/package/Payload/LooneyShift.app
+          cd build/package
+          zip -qry ../LooneyShift-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LooneyShift-unsigned
+          path: build/LooneyShift-unsigned.ipa
+          if-no-files-found: error
