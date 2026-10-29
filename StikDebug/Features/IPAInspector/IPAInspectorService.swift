@@ -107,7 +107,7 @@ enum IPAInspectorService {
 
     static func profileDictionary(_ data: Data) throws -> [String: Any] {
         guard let start = data.range(of: Data("<?xml".utf8)),
-              let end = data.range(of: Data("</plist>".utf8), range: start.lowerBound..<data.endIndex) else {
+              let end = data.range(of: Data("</plist>".utf8), options: [], in: start.lowerBound..<data.endIndex) else {
             throw ToolError.message("No XML provisioning profile found.")
         }
         return try dictionary(data.subdata(in: start.lowerBound..<end.upperBound))
