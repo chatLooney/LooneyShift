@@ -1,50 +1,93 @@
 # LooneyShift
 
-**Location spoofing first.** An iPhone app derived from [StikDebug](https://github.com/StikDebug/StikDebug), with photo privacy and IPA inspection in a secondary Tools tab.
+**Location-first iPhone utility — live location simulation, photo privacy, and IPA inspection.**
 
-Website: **https://looney.is-a.dev/**
+[Website](https://looney.is-a.dev/) · [Download IPA](https://github.com/chatLooney/LooneyShift/actions/runs/40846139295) · [Source](https://github.com/chatLooney/LooneyShift) · [Report a bug](https://github.com/chatLooney/LooneyShift/issues)
 
-Repository: https://github.com/chatLooney/LooneyShift
+> **Build available:** An unsigned iPhone IPA has been built successfully by GitHub Actions. It must be signed using your own signing setup before installation. This build has **not** been verified on an iPhone. The repository is currently private; only authorised GitHub accounts can access its downloads.
 
-## This first source version
+## Download LooneyShift IPA
 
-- Opens on the location map, with search, coordinate import, bookmarks, and route simulation inherited from StikDebug.
-- Connection banner, connect action, and shortcut to pairing settings.
-- Shift Location and Restore Location controls.
-- Photo Privacy: import a photo with the system picker, decode and re-encode a still JPEG, verify removal of GPS/camera/capture-date metadata, then share a copy. The original is unchanged. Exports lose transparency, Live Photo motion, animation, and HDR.
-- IPA Inspector: local ZIP metadata analysis, bundle ID/version/minimum iOS, declared usage descriptions, embedded framework names, provisioning-profile details and allowed entitlements, signature-resource presence, and streamed SHA-256. No installation or execution. Profile claims are not cryptographically verified; executable entitlements are not decoded yet.
-- LooneyShift app icon, distinct bundle ID `dev.looney.LooneyShift`, and `looneyshift://` URL scheme.
-- Original device details, app expiry and console screens remain under Tools.
+**Latest verified build:** [Build LooneyShift IPA — successful run #2](https://github.com/chatLooney/LooneyShift/actions/runs/40846139295) (29 October 2026).
 
-This is **source code, not a compiled or device-tested IPA**. StikDebug location simulation already works on the user's iPhone 15 Pro running iOS 26; this modified app still needs its own build and device test. Native Swift/Xcode tests have not run in the Linux authoring environment. See VALIDATION.md.
+1. Sign into GitHub with access to this repository.
+2. Open the linked workflow run and scroll to **Artifacts**.
+3. Download **`LooneyShift-unsigned`** (ZIP archive).
+4. Extract **`LooneyShift-unsigned.ipa`** from the archive.
+5. Sign the IPA with your own authorised signing method, then install it on your iPhone.
 
-## Build on a Mac
+**Artifact details:** 7,014,170-byte ZIP artifact · generated 29 October 2026 · scheduled GitHub expiry 27 January 2027. GitHub Actions artifacts are temporary; if the artifact expires, rebuild it under [Actions](https://github.com/chatLooney/LooneyShift/actions/workflows/build_ipa.yml). **There is no published GitHub Release yet.** Do not use the Releases page as a purported IPA download until a release with a real IPA asset exists.
 
-1. Install Xcode 26 or newer, open `StikDebug.xcodeproj`, and select the `StikDebug` scheme. The internal project/scheme/module names are retained to preserve the upstream build structure; the installed display name is LooneyShift.
-2. Run `python3 scripts/fetch_idevice.py` in the project folder to fetch and verify the pinned upstream device library. Allow Swift Package Manager to resolve the dependencies, including ZIPFoundation 0.9.20.
-3. Select your development team and an available bundle ID if necessary. App Groups are not needed for the visible features in this version.
-4. Select a connected iPhone and build/run. The bundled `libidevice_ffi.a` is inherited unchanged from upstream and targets physical devices; simulator builds may require rebuilding idevice for the simulator.
+The downloadable IPA is *unsigned*, not a jailbreak, certificate, or ready-to-install App Store package. You must provide signing yourself. IPA builds are not proof that location simulation will function on every iOS version.
 
-## Build an unsigned IPA on GitHub
+## Features
 
-Upload this complete source tree to a repository you control, including `.github/workflows/build_ipa.yml`. In Actions, run **Build LooneyShift IPA**. The workflow archives on a macOS runner and uploads `LooneyShift-unsigned.ipa` as an artifact. It does not publish a release or modify your website. Sign the downloaded IPA using your existing iOS signing setup before installation.
+### Location Shift
+- Map-first interface, place search, coordinates, saved bookmarks and route simulation.
+- Connection status, pairing-file setup, device support files and Connect action.
+- **Shift Location** to start location simulation and **Restore Location** to stop it.
+- No jailbreak is required for the intended paired-device workflow, but compatibility and reliability depend on iOS, device services and correct setup.
 
-The build workflow runs when this source is pushed to the main branch. Do not upload signing keys, pairing records, or personal certificates to source control.
+### Photo Privacy
+- Choose an image using the iOS system picker.
+- Export a freshly encoded JPEG to strip GPS and camera/capture metadata.
+- Keep the original image unchanged. JPEG export removes transparency, Live Photo motion, animation and HDR.
 
-## Setup on the iPhone
+### IPA Inspector
+- Inspect a local IPA archive without executing or installing it.
+- Read app version, bundle identifier, minimum iOS, embedded frameworks, usage descriptions, available provisioning profile claims and SHA-256 checksum.
+- Does not validate signing trust/revocation or decode all executable entitlements.
 
-1. Install the signed LooneyShift app and enable Developer Mode if required by your signing method.
-2. Enable your working loopback VPN (the upstream setup uses LocalDevVPN).
-3. Open Settings in LooneyShift and import the device's pairing file. LooneyShift uses its own app container, so it cannot automatically read StikDebug's imported pairing file.
-4. Let the developer support files download, then tap Connect. Keep the phone unlocked during initial setup.
-5. Select a place on the map, tap Shift Location, and check a location-consuming app. Test Restore Location before relying on it.
+### Tools
+- Device details, connection and pairing settings, app-expiry information and console.
 
-Background operation and route persistence depend on iOS lifecycle behaviour. A successful local 'active' status is not proof that another app is receiving the simulated location. If restoration fails, reconnect and retry; a device restart may be needed. This project makes no claim of being undetectable by other apps.
+## Compatibility and limitations
 
-## Current scope
+Designed for physical iPhones with a compatible developer-services/pairing setup. It is **not** a universal guarantee of location spoofing on iOS 26 or other releases. Some location-consuming apps may reject simulated location. Route/background continuity is subject to the iOS lifecycle; restarting the device may be necessary if restore fails. The build completed in CI, but the device acceptance checklist in [VALIDATION.md](VALIDATION.md) has not been completed.
 
-The first version retains upstream route behaviour. New joystick controls, GPX route management, timers, face/plate redaction, IPA version comparison, and media conversion are not implemented. The original debugging implementation remains in source where it supports shared dependencies; its app-launch/JIT screen is not a main tab.
+## Set up on iPhone
 
-## Licence and attribution
+1. Install a properly signed IPA and enable Developer Mode if your signing method requires it.
+2. Enable the loopback VPN used by the device connection flow (the upstream configuration uses LocalDevVPN).
+3. Import your own pairing file under Settings; this app cannot read pairing files stored inside another app.
+4. Connect while the phone is unlocked and allow support files to download.
+5. Select a point on the map, shift location, verify independently in another app, then restore and check that the real location returns.
 
-GNU AGPL-3.0; see LICENSE and THIRD_PARTY_NOTICES.md. Original author notices are preserved. Base upstream commit: `17b1e1d90d602a228de663a10efa987a9f9e547b`. LooneyShift adds its own navigation, branding, metadata-cleaning tool, IPA inspector, connection guidance, and build packaging. The bundled idevice dependency and other upstream dependencies retain their respective licences.
+Keep pairing records and signing credentials private. The app should be used only on devices you control and in accordance with app and service terms.
+
+## Build it yourself
+
+Requires a Mac with Xcode 26 or newer, signing for installation and access to the repository.
+
+```bash
+python3 scripts/fetch_idevice.py
+xcodebuild archive \
+  -project StikDebug.xcodeproj \
+  -scheme StikDebug \
+  -configuration Release \
+  -archivePath build/LooneyShift.xcarchive \
+  -sdk iphoneos \
+  -destination 'generic/platform=iOS' \
+  CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+```
+
+The internal Xcode project/scheme name remains `StikDebug` for build compatibility; the installed display name and bundle identifier are LooneyShift. The repository includes the [IPA build workflow](.github/workflows/build_ipa.yml); run it manually with **Run workflow** or push to `main`. Build artifacts appear under the corresponding Actions run, not automatically under Releases. Do not commit developer certificates, signing keys or pairing files.
+
+## Project status
+
+- ✅ iPhone archive and unsigned IPA packaging succeeded in GitHub Actions (run #2).
+- ✅ Source includes location, photo-export and IPA-inspection screens.
+- ⏳ Signed IPA installation and actual iPhone testing not yet verified.
+- ⏳ Native test suite and end-to-end location restoration still require device validation.
+- ⏳ Public GitHub Release with a permanent downloadable IPA has not been published.
+- Not yet included: joystick, GPX route management, timers, face/plate redaction, IPA comparison and media conversion.
+
+See [VALIDATION.md](VALIDATION.md) for test coverage and known limitations. Bug reports: [Issues](https://github.com/chatLooney/LooneyShift/issues).
+
+## License
+
+LooneyShift source is distributed under **GNU AGPL-3.0**, with upstream and other third-party terms retained. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Credits and reference
+
+LooneyShift builds on **[StikDebug](https://github.com/StikDebug/StikDebug)** (base commit `17b1e1d90d602a228de663a10efa987a9f9e547b`). Original copyrights and licence notices remain in the source and third-party notices.
